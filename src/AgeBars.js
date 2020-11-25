@@ -9,12 +9,18 @@ import {
 import { AxisLabel } from "./AxisLabel";
 import { Bar } from "./Bar";
 
-const spacer = 8;
+const space = 8;
 export const spacing = {
-  space1: spacer,
-  space2: spacer * 2,
-  space3: spacer * 3,
-  space4: spacer * 4
+  space1: space,
+  space2: space * 2,
+  space3: space * 3,
+  space4: space * 4
+};
+
+const colors = {
+  black: "#000",
+  white: "#fff",
+  blue: "hsla(200, 100%, 50%, 0.5)"
 };
 
 const calculateInterest = (
@@ -47,7 +53,7 @@ export function AgeBars(props) {
   const controls = useAnimation();
 
   const selectOnLoad = async (index) => {
-    await controls.start({ x: index * (w + spacer) });
+    await controls.start({ x: index * (w + spacer) - spacer / 2 + 4 });
     setSelectedIndex(index);
     return controls.stop();
   };
@@ -61,23 +67,28 @@ export function AgeBars(props) {
   const w = 3;
   const totalWidth = window.innerWidth - spacing.space4 * 2;
   const spacer = totalWidth / arr.length - w;
+  const offset = spacing.space2 + spacer / 2 - w / 2;
+  // const offset = 0;
 
   // Event handlers
   const handleDrag = (e, info) => {
-    const index = Math.floor(info.point.x / (w + spacer));
+    const index = Math.floor((info.point.x - offset) / (w + spacer));
     setSelectedIndex(index);
   };
   const handleDragEnd = (e, info) => {
-    const index = Math.floor(info.point.x / (w + spacer));
-    setSelectedIndex(index);
+    const index = Math.floor((info.point.x - offset) / (w + spacer));
+    setSelectedIndex(index <= 0 ? 0 : index >= 42 ? 42 : index);
     controls.start({
-      x: index * (w + spacer)
+      x: index * (w + spacer) - spacer / 2 + 4
     });
   };
 
   useEffect(() => {
-    const index = 30;
-    selectOnLoad(index);
+    const timeout = setTimeout(() => {
+      const index = 30;
+      selectOnLoad(index);
+    }, 500);
+    return () => window.clearTimeout(timeout);
   }, []);
 
   return (
@@ -87,16 +98,17 @@ export function AgeBars(props) {
       // onTap={() => setSelectedIndex(null)}
       style={{
         position: "absolute",
+        fontFamily: "Avenir, Helvetica, sans-serif",
         width: "100%",
         height: "100%",
-        background: "#fff",
+        background: colors.white,
         padding: 0,
         margin: 0,
         top: 0,
         left: 0
       }}
     >
-      <div style={{ width: "100%", height: 250, background: "#000" }}>
+      <div style={{ width: "100%", height: 350, background: colors.black }}>
         {arr.map((d, i) => {
           const h = transform(d, [initialPrincipal, 800000], [0, 200]);
           const cashContributed = calculateCash(
@@ -112,7 +124,10 @@ export function AgeBars(props) {
           const age = currentAge + i;
           const xPos = spacing.space4 + i * (w + spacer);
           return (
-            <div key={`ineinei_` + i} style={{ width: w }}>
+            <div
+              key={`ineinei_` + i}
+              style={{ position: "absolute", top: 80, width: w }}
+            >
               <Bar
                 isSelected={selectedIndex === i}
                 x={xPos}
@@ -142,8 +157,8 @@ export function AgeBars(props) {
         <motion.div
           style={{
             position: "absolute",
-            left: spacing.space4 - 13,
-            top: 10,
+            y: 90,
+            left: offset,
             width: 30,
             height: 30,
             borderRadius: "50%"
@@ -164,7 +179,8 @@ export function AgeBars(props) {
               width: 30,
               height: 35,
               borderRadius: "50%",
-              border: "4px solid white"
+              border: "4px solid " + colors.white,
+              boxShadow: "0 0 5px #fff"
             }}
           />
           {/* right crescent */}
@@ -176,7 +192,8 @@ export function AgeBars(props) {
               width: 30,
               height: 35,
               borderRadius: "50%",
-              border: "4px solid white"
+              border: "4px solid " + colors.white,
+              boxShadow: "0 0 3px #fff"
             }}
           />
           {/* middle blockout */}
@@ -188,7 +205,7 @@ export function AgeBars(props) {
               width: 45,
               height: 49,
               borderRadius: "50%",
-              background: "#000"
+              background: colors.black
             }}
           />
           {/* middle whitearea */}
@@ -200,8 +217,8 @@ export function AgeBars(props) {
               width: 30,
               height: 30,
               borderRadius: "50%",
-              backgroundColor: "white",
-              border: "2px solid white"
+              backgroundColor: colors.white,
+              border: "2px solid " + colors.white
             }}
           />
           {/* stem */}
@@ -211,8 +228,10 @@ export function AgeBars(props) {
               left: 13,
               top: 28,
               width: 3,
-              height: 160,
-              background: "white"
+              height: 161,
+              background: colors.white,
+              borderRadius: 3,
+              boxShadow: "0 0 3px #fff"
             }}
           />
         </motion.div>
@@ -220,26 +239,28 @@ export function AgeBars(props) {
           {selectedIndex > 0 && selectedIndex < 43 && (
             <motion.div
               initial={{
-                scale: 0
+                y: -100
               }}
               animate={{
-                scale: 1
+                y: 0
               }}
               exit={{
-                scale: 0
+                y: -100
               }}
               style={{
+                position: "absolute",
+                top: 10,
                 width: totalWidth,
                 height: "30px",
-                background: "hsla(0, 0, 0, 1)",
+                background: colors.black,
                 originX: 1,
                 originY: 0,
-                x: spacing.space4 - 5,
-                y: -25,
-                textAlign: "right",
+                x: spacing.space4 - 8,
+                textAlign: "center",
                 fontWeight: 700,
                 fontSize: 24,
-                color: "white"
+                color: colors.white,
+                textShadow: "0 0 5px hsla(0, 0%, 100%, 0.7)"
               }}
             >
               {"$" + numberWithCommas(Math.floor(arr[selectedIndex]))}

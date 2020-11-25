@@ -6,7 +6,7 @@ export function AxisLabel({ age, x, fixed }) {
     <motion.div
       style={{
         position: "absolute",
-        top: "200px",
+        top: "205px",
         x: x - 4 + "px",
         fontSize: "12px",
         fontWeight: 300,
