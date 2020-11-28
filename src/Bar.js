@@ -9,7 +9,7 @@ export function Bar({ isSelected, x, totalH, cashH, width }) {
     <motion.div
       style={{
         position: "absolute",
-        width: width,
+        width: 3,
         x: x + "px",
         borderRadius: "3px 3px 0 0"
       }}

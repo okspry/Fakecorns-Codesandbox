@@ -64,10 +64,10 @@ export function AgeBars(props) {
     .map((d, i) =>
       calculateInterest(initialPrincipal + i * yearlyContribution, 0.04, i)
     );
-  const w = 3;
   const totalWidth = window.innerWidth - spacing.space4 * 2;
+  const w = totalWidth / arr.length / 3;
   const spacer = totalWidth / arr.length - w;
-  const offset = spacing.space2 + spacer / 2 - w / 2;
+  const offset = spacing.space2 + spacer - w;
   // const offset = 0;
 
   // Event handlers
@@ -79,7 +79,7 @@ export function AgeBars(props) {
     const index = Math.floor((info.point.x - offset) / (w + spacer));
     setSelectedIndex(index <= 0 ? 0 : index >= 42 ? 42 : index);
     controls.start({
-      x: index * (w + spacer) - spacer / 2 + 4
+      x: index * (w + spacer) - spacer / w
     });
   };
 
